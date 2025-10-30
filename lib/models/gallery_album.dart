@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_gallery_plus/photo_gallery_plus.dart';
 
 import '../controller/gallery_controller.dart';
 import '/models/media_file.dart';
@@ -17,22 +17,15 @@ class GalleryAlbum {
   List<int>? thumbnail;
   List<DateCategory> dateCategories = [];
   late AlbumType type;
-  int get count =>
-      dateCategories.expand((element) => element.files).toList().length;
+  int get count => dateCategories.expand((element) => element.files).toList().length;
   String? get name => album.name;
 
   GalleryAlbum.album(this.album);
 
-  GalleryAlbum(
-      {required this.album,
-      required this.type,
-      this.thumbnail,
-      this.dateCategories = const []});
+  GalleryAlbum({required this.album, required this.type, this.thumbnail, this.dateCategories = const []});
 
   List<MediaFile> get medias {
-    return dateCategories
-        .expand<MediaFile>((element) => element.files)
-        .toList();
+    return dateCategories.expand<MediaFile>((element) => element.files).toList();
   }
 
   set setType(AlbumType type) {
@@ -56,15 +49,11 @@ class GalleryAlbum {
       MediaFile mediaFile = MediaFile.medium(medium);
       String name = getDateCategory(mediaFile, locale: locale);
       if (dateCategory.any((element) => element.name == name)) {
-        dateCategory
-            .singleWhere((element) => element.name == name)
-            .files
-            .add(mediaFile);
+        dateCategory.singleWhere((element) => element.name == name).files.add(mediaFile);
       } else {
         DateTime? lastDate = mediaFile.lastModified;
         lastDate = lastDate ?? DateTime.now();
-        dateCategory.add(
-            DateCategory(files: [mediaFile], name: name, dateTime: lastDate));
+        dateCategory.add(DateCategory(files: [mediaFile], name: name, dateTime: lastDate));
       }
     }
     dateCategories = dateCategory;
@@ -78,16 +67,14 @@ class GalleryAlbum {
   }
 
   DateTime? get lastDate {
-    if (dateCategories.isNotEmpty &&
-        dateCategories.first.files.first.medium != null) {
+    if (dateCategories.isNotEmpty && dateCategories.first.files.first.medium != null) {
       return dateCategories.first.files.first.medium!.lastDate;
     } else {
       return null;
     }
   }
 
-  List<MediaFile> get files =>
-      dateCategories.expand((element) => element.files).toList();
+  List<MediaFile> get files => dateCategories.expand((element) => element.files).toList();
 
   String getDateCategory(MediaFile media, {Locale? locale}) {
     Config config = GetInstance().isRegistered<PhoneGalleryController>()
@@ -96,9 +83,7 @@ class GalleryAlbum {
     DateTime? lastDate = media.lastModified;
     lastDate = lastDate ?? DateTime.now();
     initializeDateFormatting();
-    String languageCode = locale != null
-        ? (locale).languageCode
-        : Platform.localeName.split('_')[0];
+    String languageCode = locale != null ? (locale).languageCode : Platform.localeName.split('_')[0];
     if (daysBetween(lastDate) <= 3) {
       return config.recent;
     } else if (daysBetween(lastDate) > 3 && daysBetween(lastDate) <= 7) {
@@ -151,15 +136,11 @@ class GalleryAlbum {
   void addFile(MediaFile file, {Locale? locale}) {
     String name = getDateCategory(file, locale: locale);
     if (dateCategories.any((element) => element.name == name)) {
-      dateCategories
-          .singleWhere((element) => element.name == name)
-          .files
-          .add(file);
+      dateCategories.singleWhere((element) => element.name == name).files.add(file);
     } else {
       DateTime? lastDate = file.lastModified;
       lastDate = lastDate ?? DateTime.now();
-      dateCategories
-          .add(DateCategory(files: [file], name: name, dateTime: lastDate));
+      dateCategories.add(DateCategory(files: [file], name: name, dateTime: lastDate));
     }
   }
 }
@@ -168,8 +149,7 @@ class DateCategory {
   String name;
   List<MediaFile> files;
   DateTime dateTime;
-  DateCategory(
-      {required this.files, required this.name, required this.dateTime});
+  DateCategory({required this.files, required this.name, required this.dateTime});
 }
 
 enum AlbumType { video, image, mixed }
